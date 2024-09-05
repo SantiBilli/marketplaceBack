@@ -7,6 +7,8 @@ export const loginCTL = async (req, res) => {
 
     const userData = await obtainPassword(bodyParams.email)
 
+    if (userData == 500) return res.status(500).send("Database Error.")
+
     if (!userData) return res.status(401).send("Invalid Credentials") //401 Unauthorized
 
     const match = await bcrypt.compare(bodyParams.password, userData.password)

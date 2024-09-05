@@ -1,17 +1,26 @@
-import { v4 } from "uuid"
-import bcrypt from "bcrypt"
-import { registerClientSVC } from "../services/register.js"
+import { emailExistsSVC, registerBusinessSVC, registerClientSVC } from "../services/register.js"
 
-export const registerClientCTL = async (req, res) => {
+export const registerCTL = async (req, res) => {
     
     const bodyParams = req.body
 
-    const userId = v4()
+    const emailExists = await emailExistsSVC(bodyParams.email)
+    
+    if (emailExists) return res.status(409).send("Email already exists.")
 
-    const salt = await bcrypt.genSalt(10)
-    const hashPassword = await bcrypt.hash(bodyParams.password, salt)
+    if (bodyParams.role == "client") {
 
-    const registerClient =  await registerClientSVC(bodyParams, userId, hashPassword)
+        const registerClient =  await registerClientSVC(bodyParams.name, bodyParams.surname, bodyParams.email, bodyParams.date, bodyParams.password)
 
-    res.status(200).send()
+    } else if (bodyParams.role == "business") {
+
+        const pfp = ".png"
+    
+        const registerBusiness =  await registerBusinessSVC(bodyParams.name, bodyParams.email, pfp, bodyParams.description, bodyParams.password)
+        
+    }
+
+    if (!registerBusinessSVC == 500 || !registerClientSVC == 500) return res.status(500).send("Database Error.")
+
+    return res.status(201).send("Created.")
 }

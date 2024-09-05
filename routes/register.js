@@ -1,10 +1,8 @@
 import { Router } from "express";
-import { registerClientCTL } from "../controller/register.js";
+import { registerCTL } from "../controller/register.js";
 
 const registerRouter = Router();
 
-registerRouter.post("/register-client", registerClientCTL)
-
-// registrarRouter.post("/registrar-empresa", )
+registerRouter.post("/registers", registerCTL)
 
 export default registerRouter

@@ -11,9 +11,9 @@ app.disable("x-powered-by")
 app.use(cors())
 app.use(express.json({limit: "10mb"}))
 
-app.use("/api", pingRouter)
-app.use("/api", registerRouter)
-app.use("/api", loginRouter)
+app.use(pingRouter)
+app.use(registerRouter)
+app.use(loginRouter)
 
 app.listen(PORT, () => {
     console.log(`Server listening on https//localhost:${PORT}`)

@@ -6,6 +6,8 @@ export const obtainPassword = async (email) => {
 
     const results = await databaseExecute(userData, [email])
 
+    if (!results) return 500
+
     if (results.length == 0) {
         return false
     }
