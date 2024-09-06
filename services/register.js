@@ -28,16 +28,17 @@ export const registerClientSVC = async (name, surname, email, date, password) =>
 
 }
 
-export const registerBusinessSVC = async (name, email, date, pfp, description, password) => {
+export const registerBusinessSVC = async (name, email, pfp, description, password) => {
 
     const userId = v4()
 
     const salt = await bcrypt.genSalt(10)
+    
     const hashPassword = await bcrypt.hash(password, salt)
 
-    const registerBusiness = "INSERT INTO users (userId, name, email, date, pfp, description, password, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    const registerBusiness = "INSERT INTO users (userId, name, email, pfp, description, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)"
     
-    const results = await databaseExecute(registerBusiness, [userId, name, email, date, pfp, description, hashPassword, "business"])
+    const results = await databaseExecute(registerBusiness, [userId, name, email, pfp, description, hashPassword, "business"])
 
     if (!results) return 500
     

@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { registerCTL } from "../controller/register.js";
+import { registerBusinessCTL, registerClientCTL,  } from "../controller/register.js";
+import { upload } from "../middlewares/fileUpload.js";
 
 const registerRouter = Router();
 
-registerRouter.post("/registers", registerCTL)
+registerRouter.post("/registers/clients", registerClientCTL)
+registerRouter.post("/registers/businesses", upload.single('file'), registerBusinessCTL)
 
 export default registerRouter

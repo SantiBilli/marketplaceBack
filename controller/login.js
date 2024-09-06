@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt"
 import { obtainPassword } from "../services/login.js"
 
-export const loginCTL = async (req, res) => {
+export const loginCTL = async (req, res, next) => {
     
     const bodyParams = req.body
 
@@ -15,5 +15,10 @@ export const loginCTL = async (req, res) => {
 
     if (!match) return res.status(401).send("Invalid Credentials") //401 Unauthorized
 
-    res.status(200).send()
+    res.locals.userData = {
+        userId: userData.userId,
+        role: userData.role
+    }
+
+    next()
 }
