@@ -17,12 +17,9 @@ export const registerClientSVC = async (name, surname, email, date, password) =>
 
     const userId = v4()
 
-    const salt = await bcrypt.genSalt(10)
-    const hashPassword = await bcrypt.hash(password, salt)
-
     const registerClient = "INSERT INTO users (userId, name, surname, email, date, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
-    const results = await databaseExecute(registerClient, [userId, name, surname, email, date, hashPassword, "client"])
+    const results = await databaseExecute(registerClient, [userId, name, surname, email, date, password, "client"])
 
     if (!results) return 500
 
@@ -32,13 +29,9 @@ export const registerBusinessSVC = async (name, email, pfp, description, passwor
 
     const userId = v4()
 
-    const salt = await bcrypt.genSalt(10)
-    
-    const hashPassword = await bcrypt.hash(password, salt)
-
     const registerBusiness = "INSERT INTO users (userId, name, email, pfp, description, password, role) VALUES (?, ?, ?, ?, ?, ?, ?)"
     
-    const results = await databaseExecute(registerBusiness, [userId, name, email, pfp, description, hashPassword, "business"])
+    const results = await databaseExecute(registerBusiness, [userId, name, email, pfp, description, password, "business"])
 
     if (!results) return 500
     

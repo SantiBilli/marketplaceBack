@@ -5,6 +5,7 @@ import registerRouter from "./routes/register.js";
 import loginRouter from "./routes/login.js";
 import registerVideogamesRouter from "./routes/registerVideogame.js";
 import cookieParser from "cookie-parser";
+import modifyProfileRouter from "./routes/modifyProfile.js";
 
 const app = express();
 const PORT = process.env.PORT || 3550;
@@ -18,6 +19,7 @@ app.use(pingRouter)
 app.use(registerRouter)
 app.use(loginRouter)
 app.use(registerVideogamesRouter)
+app.use(modifyProfileRouter)
 
 app.listen(PORT, () => {
     console.log(`Server listening on https//localhost:${PORT}`)
