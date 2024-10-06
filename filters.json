@@ -1,0 +1,34 @@
+{
+    "filters": {
+      "category": [
+        "Aventura",
+        "Acción",
+        "RPG",
+        "MOBA",
+        "Otros"
+      ],
+      "operatingSystem": [
+        "Windows",
+        "Mac",
+        "Linux"
+      ],
+      "language": [
+        "Español",
+        "Inglés",
+        "Francés",
+        "Alemán",
+        "Otros"
+      ],
+      "players": [
+        "Single-player",
+        "Multi-player"
+      ],
+      "rating": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ]
+    }
+  }

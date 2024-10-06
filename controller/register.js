@@ -1,6 +1,7 @@
 import { emailExistsSVC, registerBusinessSVC, registerClientSVC } from "../services/register.js"
 import fs from "fs"
 import bcrypt from "bcrypt"
+
 export const registerClientCTL = async (req, res) => {
     
     const bodyParams = req.body

@@ -1,36 +1,22 @@
 import { obtainVideogamesSCV, registerVideogamesSCV } from "../services/registerVideogames.js"
 import fs from "fs"
+
 export const registerVideogamesCTL = async (req, res, next) => {
 
     const userData = res.locals.userData
     const bodyParams = req.body
     const file = req.file
     const photo = file.filename
+    const filters = JSON.parse(bodyParams.test)
 
-    console.log(userData);
     
-
     if (userData.role == 'client') {
         fs.unlinkSync(`uploads/videogamePhotos/${photo}`);
         res.status(403)
         return next()
     }
 
-    //TEMPORAL
-    const category = bodyParams.category.split(",")
-        .map(item => item.trim());
-
-    const operating_system = bodyParams.operating_system.split(",")
-        .map(item => item.trim());
-
-    const language = bodyParams.language.split(",")
-        .map(item => item.trim());
-
-    const players = bodyParams.players.split(",")
-        .map(item => item.trim());
-    
-    
-    const publicaciones = await registerVideogamesSCV(bodyParams.name, bodyParams.description, photo, category, operating_system, language, players, bodyParams.minRequirements, bodyParams.recRequirements, bodyParams.price, bodyParams.userId)
+    const publicaciones = await registerVideogamesSCV(bodyParams.name, bodyParams.description, photo, filters, bodyParams.minRequirements, bodyParams.recRequirements, bodyParams.price, userData.userId)
 
     if (!publicaciones) res.status(500)
 
@@ -51,11 +37,24 @@ export const obtainVideogamesCTL = async (req, res, next) => {
         limit
       } = req.query;
 
-    const videogames = await obtainVideogamesSCV(category, operating_system, language, players, qualification, page, limit)
+    let filtersArray = [];
     
-    // const publicaciones = await registerVideogamesSCV()
+    const addToArray = (value) => {
+        if (value) {
+            return Array.isArray(value) ? value : [value];
+        }
+        return [];
+    };
 
-    // res.locals.response = {data: publicaciones}
+    filtersArray.push(...addToArray(category));
+    filtersArray.push(...addToArray(operating_system));
+    filtersArray.push(...addToArray(language));
+    filtersArray.push(...addToArray(players));
+
+
+    const videogames = await obtainVideogamesSCV(filtersArray, qualification, page, limit)
+
+    res.locals.response = {data: videogames}
 
     next()
 
