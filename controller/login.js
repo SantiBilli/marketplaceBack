@@ -20,5 +20,6 @@ export const loginCTL = async (req, res, next) => {
         role: userData.role
     }
 
+    res.status(204)
     next()
 }

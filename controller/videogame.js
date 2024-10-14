@@ -1,4 +1,4 @@
-import { obtainVideogamesSCV, registerVideogamesSCV } from "../services/registerVideogames.js"
+import { obtainVideogamesSCV, registerVideogamesSCV } from "../services/videogame.js"
 import fs from "fs"
 
 export const registerVideogamesCTL = async (req, res, next) => {
@@ -7,8 +7,7 @@ export const registerVideogamesCTL = async (req, res, next) => {
     const bodyParams = req.body
     const file = req.file
     const photo = file.filename
-    const filters = JSON.parse(bodyParams.test)
-
+    const filters = bodyParams.filters.split(',')
     
     if (userData.role == 'client') {
         fs.unlinkSync(`uploads/videogamePhotos/${photo}`);
@@ -28,10 +27,7 @@ export const registerVideogamesCTL = async (req, res, next) => {
 export const obtainVideogamesCTL = async (req, res, next) => {
 
     const {
-        category,
-        operating_system,
-        language,
-        players,
+        filter,
         qualification,
         page,
         limit
@@ -46,11 +42,15 @@ export const obtainVideogamesCTL = async (req, res, next) => {
         return [];
     };
 
-    filtersArray.push(...addToArray(category));
-    filtersArray.push(...addToArray(operating_system));
-    filtersArray.push(...addToArray(language));
-    filtersArray.push(...addToArray(players));
+    filtersArray.push(...addToArray(filter));
 
+    if (filtersArray.includes('Single-Player')) {
+        filtersArray[filtersArray.indexOf('Single-Player')] = 'SinglePlayer';
+    }
+      
+    if (filtersArray.includes('Multi-Player')) {
+        filtersArray[filtersArray.indexOf('Multi-Player')] = 'MultiPlayer';
+    }
 
     const videogames = await obtainVideogamesSCV(filtersArray, qualification, page, limit)
 
