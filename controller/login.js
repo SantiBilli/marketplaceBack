@@ -20,6 +20,14 @@ export const loginCTL = async (req, res, next) => {
         role: userData.role
     }
 
-    res.status(204)
+    res.locals.response = {
+        data: {
+            userId: userData.userId,
+            role: userData.role
+        }
+    }
+
+    res.status(201)
+    
     next()
 }

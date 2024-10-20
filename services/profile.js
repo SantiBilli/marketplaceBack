@@ -35,6 +35,8 @@ export const modifyProfileSVC = async (userId, name, surname, email, password, d
     const query = `UPDATE users SET ${fields.join(', ')} WHERE userId = ?`;
 
     const results = await databaseExecute(query, values)
+
+    if (!results) return 500;
     
     return true;
 }

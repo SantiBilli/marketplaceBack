@@ -4,14 +4,18 @@ import pingRouter from "./routes/ping.js";
 import registerRouter from "./routes/register.js";
 import loginRouter from "./routes/login.js";
 import cookieParser from "cookie-parser";
-import modifyProfileRouter from "./routes/modifyProfile.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import videogameRouter from "./routes/videogame.js";
+import profileRouter from "./routes/profile.js";
+import validateTokenRouter from "./routes/validateToken.js";
+import reviewsRouter from "./routes/reviews.js";
+import wishlistRouter from "./routes/wishlist.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const videogamesDirectory = path.join(__dirname, "uploads/videogamePhotos");
+const pfpDirectory = path.join(__dirname, "uploads/businessLogos");
 
 const app = express();
 const PORT = process.env.PORT || 3550;
@@ -28,9 +32,13 @@ app.use(pingRouter)
 app.use(registerRouter)
 app.use(loginRouter)
 app.use(videogameRouter)
-app.use(modifyProfileRouter)
+app.use(profileRouter)
+app.use(validateTokenRouter)
+app.use(reviewsRouter)
+app.use(wishlistRouter)
 
-app.use('/image', express.static(videogamesDirectory))
+app.use('/videogame', express.static(videogamesDirectory))
+app.use('/pfp', express.static(pfpDirectory))
 
 app.listen(PORT, () => {
     console.log(`Server listening on https//localhost:${PORT}`)

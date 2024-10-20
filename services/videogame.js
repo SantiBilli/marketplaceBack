@@ -1,7 +1,7 @@
 import { databaseExecute } from "../database/database.js"
 import { v4 } from "uuid"
 
-export const registerVideogamesSCV = async (name, description, photo, filters, minRequirements, recRequirements, price, userId) => {
+export const registerVideogamesSVC = async (name, description, photo, filters, minRequirements, recRequirements, price, userId) => {
 
     const videogameId = v4()
 
@@ -23,11 +23,11 @@ export const registerVideogamesSCV = async (name, description, photo, filters, m
     return true;
 }
 
-export const obtainVideogamesSCV = async (filtersArray, qualification, page, limit) => {
-
+export const obtainVideogamesSVC = async (filtersArray = [], qualification, page, limit) => {
+    
     let querry = `
         SELECT 
-            videogames.*, videogames.name vg_name, users.name, users.pfp, users.description, filterCategory.*, filterLanguage.*, filterOperatingSystem.*, filterPlayers.*
+            videogames.videogameId, videogames.name, videogames.price, videogames.photo
         FROM 
             videogames 
         JOIN
@@ -64,8 +64,47 @@ export const obtainVideogamesSCV = async (filtersArray, qualification, page, lim
     querry += `LIMIT ${limit} OFFSET ${(page - 1) * limit};`
 
     const videogames = await databaseExecute(querry)
-
+    
     if (!videogames) return false
 
     return videogames;
+}
+
+//videogames.*, videogames.name vg_name, users.name, users.pfp, users.description, filterCategory.*, filterLanguage.*, filterOperatingSystem.*, filterPlayers.*
+
+export const obtainVideogamesDetailSVC = async (videogameId) => {
+        
+    const querry = `
+        SELECT 
+            videogames.videogameId, videogames.name vg_name, videogames.price, videogames.photo, videogames.description vg_description, videogames.minRequirements, videogames.recRequirements, users.name, users.pfp, users.description
+        FROM 
+            videogames 
+        JOIN
+            users
+        ON
+            videogames.userId = users.userId
+        JOIN 
+            filterCategory
+        ON 
+            videogames.videogameId = filterCategory.videogameId 
+        JOIN 
+            filterLanguage
+        ON 
+            videogames.videogameId = filterLanguage.videogameId
+        JOIN 
+            filterOperatingSystem
+        ON 
+            videogames.videogameId = filterOperatingSystem.videogameId
+        JOIN 
+            filterPlayers
+        ON 
+            videogames.videogameId = filterPlayers.videogameId
+        WHERE 
+            videogames.videogameId = ?;`
+
+    const videogame = await databaseExecute(querry, [videogameId])
+    
+    if (!videogame) return false
+
+    return videogame;
 }

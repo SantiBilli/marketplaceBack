@@ -1,4 +1,4 @@
-import { modifyProfileSVC, obtainOldFileSVC } from "../services/modifyProfile.js";
+import { modifyProfileSVC, obtainOldFileSVC } from "../services/profile.js";
 import bcrypt from "bcrypt"
 import fs from "fs"
 import { emailExistsSVC } from "../services/register.js";
@@ -38,6 +38,8 @@ export const modifyProfileCTL = async (req, res, next) => {
     }
 
     const modifyProfile = await modifyProfileSVC(userId, name, surname, email, hashPassword, description, req.file ? req.file.filename : null);
+
+    if (modifyProfile == 500) { res.status(500) }
     
     next()
 
