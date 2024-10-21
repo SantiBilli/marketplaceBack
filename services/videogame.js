@@ -108,3 +108,18 @@ export const obtainVideogamesDetailSVC = async (videogameId) => {
 
     return videogame;
 }
+
+export const obtainVideogamesCountSVC = async () => {
+        
+        const querry = `
+            SELECT 
+                COUNT(videogameId) as videogamesCount
+            FROM 
+                videogames;`
+    
+        const videogamesCount = await databaseExecute(querry)
+        
+        if (!videogamesCount) return false
+    
+        return videogamesCount;
+}

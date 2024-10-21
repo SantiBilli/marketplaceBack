@@ -1,4 +1,4 @@
-import { obtainVideogamesDetailSVC, obtainVideogamesSVC, registerVideogamesSVC } from "../services/videogame.js"
+import { obtainVideogamesCountSVC, obtainVideogamesDetailSVC, obtainVideogamesSVC, registerVideogamesSVC } from "../services/videogame.js"
 import fs from "fs"
 
 export const registerVideogamesCTL = async (req, res, next) => {
@@ -66,4 +66,15 @@ export const obtainVideogamesDetailCTL = async (req, res, next) => {
     res.locals.response = {data: videogame}
 
     next()
+}
+
+export const obtainVideogamesCountCTL = async (req, res, next) => {
+    
+        const videogamesCount = await obtainVideogamesCountSVC()
+
+        if (!videogamesCount) res.status(500)
+    
+        res.locals.response = {data: videogamesCount}
+    
+        next()
 }
