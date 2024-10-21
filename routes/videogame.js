@@ -10,6 +10,6 @@ videogameRouter.post('/videogames', validateToken, upload2.single('file'), regis
 
 videogameRouter.get('/videogames', validateToken, obtainVideogamesCTL, cookieSender)
 
-videogameRouter.get('/videogames-details/:videogameId', validateToken, obtainVideogamesDetailCTL, cookieSender)
+videogameRouter.get('/details/:videogameId', validateToken, obtainVideogamesDetailCTL, cookieSender)
 
 export default videogameRouter
