@@ -1,6 +1,6 @@
 import { databaseExecute } from "../database/database.js";
 
-export const modifyProfileSVC = async (userId, name, surname, email, password, description, file) => {
+export const modifyProfileSVC = async (userId, name, surname, email, date, password, description, file) => {
 
     const fields = [];
     const values = [];
@@ -21,6 +21,10 @@ export const modifyProfileSVC = async (userId, name, surname, email, password, d
         fields.push('description = ?');
         values.push(description);
     }
+    if (date) {
+        fields.push('date = ?');
+        values.push(date);
+    }
     if (password) {
         fields.push('password = ?');
         values.push(password);
@@ -31,6 +35,7 @@ export const modifyProfileSVC = async (userId, name, surname, email, password, d
     }
 
     values.push(userId);
+
 
     const query = `UPDATE users SET ${fields.join(', ')} WHERE userId = ?`;
 
@@ -49,4 +54,19 @@ export const obtainOldFileSVC = async (userId) => {
     if (!results) return 500;
 
     return results[0].pfp
+}
+
+export const obtainProfileSVC = async (userId, role) => {
+
+    let query;
+    
+    role == 'client' ? query = "SELECT name, surname, email, pfp, date FROM users WHERE userId = ?" 
+    : query = "SELECT name, email, description role FROM users WHERE userId = ?"
+        
+    const results = await databaseExecute(query, [userId])
+
+    if (!results) return 500;
+
+    return results[0];
+    
 }

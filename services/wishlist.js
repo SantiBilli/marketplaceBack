@@ -3,9 +3,13 @@ import { databaseExecute } from "../database/database.js";
 export const wishlistAddSVC = async (videogameId, userId) => {
 
     const querry = "INSERT INTO wishlist (videogameId, userId) VALUES (?, ?)"
-    const response = await databaseExecute(querry, [videogameId, userId])
 
-    if (!response) return 500
+    const updateWishlistVideogames = "UPDATE videogames SET wishlists = wishlists + 1 WHERE videogameId = ?"
+
+    const response = await databaseExecute(querry, [videogameId, userId])
+    const response2 = await databaseExecute(updateWishlistVideogames, [videogameId])
+
+    if (!response || !response2) return 500
 
     return true;
 
@@ -14,9 +18,13 @@ export const wishlistAddSVC = async (videogameId, userId) => {
 export const wishlistDeleteSVC = async (videogameId, userId) => {
     
     const querry = "DELETE FROM wishlist WHERE videogameId = ? AND userId = ?"
-    const response = await databaseExecute(querry, [videogameId, userId])
+
+    const updateWishlistVideogames = "UPDATE videogames SET wishlists = wishlists - 1 WHERE videogameId = ?"
     
-    if (!response) return 500
+    const response = await databaseExecute(querry, [videogameId, userId])
+    const response2 = await databaseExecute(updateWishlistVideogames, [videogameId])
+    
+    if (!response || !response2) return 500
     
     return true;
 }

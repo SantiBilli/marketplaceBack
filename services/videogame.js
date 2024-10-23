@@ -25,6 +25,8 @@ export const registerVideogamesSVC = async (name, description, photo, filters, m
 
 export const obtainVideogamesSVC = async (filtersArray = [], qualification, page, limit) => {
     
+    let querryArray = []
+
     let querry = `
         SELECT 
             videogames.videogameId, videogames.name, videogames.price, videogames.photo
@@ -58,19 +60,20 @@ export const obtainVideogamesSVC = async (filtersArray = [], qualification, page
     );
 
     if (qualification) {
-        querry += `AND qualification = ${qualification} `;
+        querry += `AND qualification = ?`;
+        querryArray.push(qualification);
     }
 
-    querry += `LIMIT ${limit} OFFSET ${(page - 1) * limit};`
+    querry += `LIMIT ? OFFSET ?;`
+    querryArray.push(Number(limit), (page - 1) * limit)
 
-    const videogames = await databaseExecute(querry)
+    
+    const videogames = await databaseExecute(querry, querryArray)
     
     if (!videogames) return false
 
     return videogames;
 }
-
-//videogames.*, videogames.name vg_name, users.name, users.pfp, users.description, filterCategory.*, filterLanguage.*, filterOperatingSystem.*, filterPlayers.*
 
 export const obtainVideogamesDetailSVC = async (videogameId) => {
         
@@ -102,9 +105,12 @@ export const obtainVideogamesDetailSVC = async (videogameId) => {
         WHERE 
             videogames.videogameId = ?;`
 
+    const addView = `UPDATE videogames SET views = views + 1 WHERE videogameId = ?`
+
     const videogame = await databaseExecute(querry, [videogameId])
-    
-    if (!videogame) return false
+    const view = await databaseExecute(addView, [videogameId])
+
+    if (!videogame || !view) return false
 
     return videogame;
 }
