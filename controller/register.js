@@ -41,7 +41,7 @@ export const registerBusinessCTL = async (req, res) => {
     const hashPassword = await bcrypt.hash(bodyParams.password, salt)
     
     if (emailExists) {
-        fs.unlinkSync(`uploads/businessLogos/${logo}`);
+        fs.unlinkSync(`uploads/profilePhotos/${logo}`);
         return res.status(409).send("Email ya registrado.")
     }
 
