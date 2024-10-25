@@ -61,7 +61,7 @@ export const obtainProfileSVC = async (userId, role) => {
     let query;
     
     role == 'client' ? query = "SELECT name, surname, email, pfp, date FROM users WHERE userId = ?" 
-    : query = "SELECT name, email, description role FROM users WHERE userId = ?"
+    : query = "SELECT name, email, description, pfp FROM users WHERE userId = ?"
         
     const results = await databaseExecute(query, [userId])
 
