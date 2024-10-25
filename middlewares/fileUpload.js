@@ -4,11 +4,11 @@ import fs from "fs";
 export const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       
-      if (!fs.existsSync('uploads/businessLogos/')) {
-        fs.mkdirSync('uploads/businessLogos/', { recursive: true });
+      if (!fs.existsSync('uploads/profilePhotos/')) {
+        fs.mkdirSync('uploads/profilePhotos/', { recursive: true });
       }
 
-      cb(null, 'uploads/businessLogos/')
+      cb(null, 'uploads/profilePhotos/')
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + "_" + file.originalname

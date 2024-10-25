@@ -31,7 +31,7 @@ export const modifyProfileCTL = async (req, res, next) => {
             return next()
         }
         if (oldFile != null){
-            fs.unlinkSync(`uploads/businessLogos/${oldFile}`)
+            fs.unlinkSync(`uploads/profilePhotos/${oldFile}`)
         }
     }
     

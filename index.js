@@ -16,7 +16,7 @@ import statsRouter from "./routes/stats.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const videogamesDirectory = path.join(__dirname, "uploads/videogamePhotos");
-const pfpDirectory = path.join(__dirname, "uploads/businessLogos");
+const pfpDirectory = path.join(__dirname, "uploads/profilePhotos");
 
 const app = express();
 const PORT = process.env.PORT || 3550;
