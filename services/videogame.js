@@ -115,17 +115,50 @@ export const obtainVideogamesDetailSVC = async (videogameId) => {
     return videogame;
 }
 
-export const obtainVideogamesCountSVC = async () => {
-        
-        const querry = `
-            SELECT 
-                COUNT(videogameId) as videogamesCount
-            FROM 
-                videogames;`
+export const obtainVideogamesCountSVC = async (filtersArray = [], qualification) => {
     
-        const videogamesCount = await databaseExecute(querry)
-        
-        if (!videogamesCount) return false
+    let querryArray = []
+
+    let querry = `
+        SELECT 
+            COUNT(videogames.videogameId) as videogamesCount
+        FROM 
+            videogames
+        JOIN
+            users
+        ON
+            videogames.userId = users.userId
+        JOIN 
+            filterCategory
+        ON 
+            videogames.videogameId = filterCategory.videogameId 
+        JOIN 
+            filterLanguage
+        ON 
+            videogames.videogameId = filterLanguage.videogameId
+        JOIN 
+            filterOperatingSystem
+        ON 
+            videogames.videogameId = filterOperatingSystem.videogameId
+        JOIN 
+            filterPlayers
+        ON 
+            videogames.videogameId = filterPlayers.videogameId
+        WHERE 1=1 `
+
+    filtersArray.forEach((filter) => {
+        querry += `AND ${filter} = 1 `;
+    }
+    );
+
+    if (qualification) {
+        querry += `AND qualification = ?`;
+        querryArray.push(qualification);
+    }
+
+    const videogamesCount = await databaseExecute(querry, querryArray)
     
-        return videogamesCount;
+    if (!videogamesCount) return false
+
+    return videogamesCount;
 }
