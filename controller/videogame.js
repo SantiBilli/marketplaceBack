@@ -49,10 +49,14 @@ export const obtainVideogamesCTL = async (req, res, next) => {
     }
     
     const videogames = await obtainVideogamesSVC(filtersArray, qualification, page, limit)
-
+    const count = await obtainVideogamesCountSVC(filtersArray, qualification)
+    
     if (!videogames) res.status(500)
 
-    res.locals.response = {data: videogames}
+    res.locals.response = {data: {
+        videogames: videogames,
+        count: count[0]
+    }}
 
     next()
 }
@@ -66,15 +70,4 @@ export const obtainVideogamesDetailCTL = async (req, res, next) => {
     res.locals.response = {data: videogame}
 
     next()
-}
-
-export const obtainVideogamesCountCTL = async (req, res, next) => {
-    
-        const videogamesCount = await obtainVideogamesCountSVC()
-
-        if (!videogamesCount) res.status(500)
-    
-        res.locals.response = {data: videogamesCount}
-    
-        next()
 }
