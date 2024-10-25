@@ -23,12 +23,16 @@ export const modifyProfileCTL = async (req, res, next) => {
     }
 
     if (req.file) {
+        
         const oldFile = await obtainOldFileSVC(userId)
+        
         if (oldFile == 500) {
             res.status(500)
             return next()
         }
-        fs.unlinkSync(`uploads/businessLogos/${oldFile}`);
+        if (oldFile != null){
+            fs.unlinkSync(`uploads/businessLogos/${oldFile}`)
+        }
     }
     
     let hashPassword = null;
@@ -41,7 +45,7 @@ export const modifyProfileCTL = async (req, res, next) => {
     const modifyProfile = await modifyProfileSVC(userId, name, surname, email, date, hashPassword, description, req.file ? req.file.filename : null);
 
     if (modifyProfile == 500) { res.status(500) }
-    
+
     next()
 
 }
