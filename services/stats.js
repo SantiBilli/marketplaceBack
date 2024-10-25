@@ -6,8 +6,6 @@ export const obtainStatSVC = async (userId) => {
 
     const results = await databaseExecute(querry, [userId])
 
-    console.log(results);
-
     if (!results) return false
     
     return results

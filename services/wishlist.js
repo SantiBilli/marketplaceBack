@@ -40,9 +40,11 @@ export const wishlistVerifySVC = async (videogameId, userId) => {
     return true;
 }
 
-export const wishlistObtainSVC = async (userId) => {
+export const wishlistObtainSVC = async (userId, page, limit) => {
             
-    const querry = `
+    let querryArray = [userId]
+    
+    let querry = `
     SELECT 
         wishlist.videogameId, videogames.photo, videogames.name, videogames.price
     FROM 
@@ -51,6 +53,27 @@ export const wishlistObtainSVC = async (userId) => {
         videogames
     ON
         wishlist.videogameId = videogames.videogameId
+    WHERE 
+        wishlist.userId = ?`
+
+    querry += `LIMIT ? OFFSET ?;`
+    querryArray.push(Number(limit), (page - 1) * limit)
+    
+    const response = await databaseExecute(querry, querryArray)
+            
+    if (!response) return 500
+    if (response.length == 0) return 204
+            
+    return response;
+}
+
+export const wishlistObtainCountSVC = async (userId) => {
+            
+    const querry = `
+    SELECT 
+        COUNT(wishlist.videogameId) as wishlistCount
+    FROM
+        wishlist
     WHERE 
         wishlist.userId = ?`
 
