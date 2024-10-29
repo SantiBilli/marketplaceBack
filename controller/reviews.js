@@ -1,4 +1,4 @@
-import { insertReviewSVC, obtainReviewsSVC } from "../services/reviews.js";
+import { insertReviewSVC, obtainReviewsSVC, reviewsCountSVC } from "../services/reviews.js";
 
 export const createReviewCTL = async (req, res, next) => {
 
@@ -24,12 +24,18 @@ export const createReviewCTL = async (req, res, next) => {
 export const obtainReviewsCTL = async (req, res, next) => {
     
     const videogameId = req.params.videogameId;
+    const {page, limit} = req.query
 
-    const results = await obtainReviewsSVC(videogameId)
+    const results = await obtainReviewsSVC(videogameId, page, limit)
+    const count = await reviewsCountSVC(videogameId)
+
 
     if (!results) { res.status(500) }
 
-    res.locals.response = { data: results }
+    res.locals.response = { data: {
+        reviews: results,
+        count: count
+    } }
 
     next()
 }
