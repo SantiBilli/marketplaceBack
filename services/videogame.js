@@ -162,3 +162,120 @@ export const obtainVideogamesCountSVC = async (filtersArray = [], qualification)
 
     return videogamesCount;
 }
+
+export const obtainVideogamesUploadsSVC = async (userId, page, limit) => {
+        
+        let querryArray = [userId]
+
+        let querry = `
+            SELECT 
+                videogames.videogameId, videogames.name, videogames.price, videogames.photo
+            FROM 
+                videogames
+            JOIN
+                users
+            ON
+                videogames.userId = users.userId
+            JOIN 
+                filterCategory
+            ON 
+                videogames.videogameId = filterCategory.videogameId 
+            JOIN 
+                filterLanguage
+            ON 
+                videogames.videogameId = filterLanguage.videogameId
+            JOIN 
+                filterOperatingSystem
+            ON 
+                videogames.videogameId = filterOperatingSystem.videogameId
+            JOIN 
+                filterPlayers
+            ON 
+                videogames.videogameId = filterPlayers.videogameId
+            WHERE 
+                videogames.userId = ?`
+
+        querry += `LIMIT ? OFFSET ?;`
+
+        querryArray.push(Number(limit), (page - 1) * limit)
+    
+        const videogames = await databaseExecute(querry, querryArray)
+        
+        if (!videogames) return false
+    
+        return videogames;
+}
+
+export const obtainVideogamesUploadsCountSVC = async (userId) => {
+    
+    const querry = `
+        SELECT 
+            COUNT(videogames.videogameId) as videogamesCount
+        FROM 
+            videogames
+        JOIN
+            users
+        ON
+            videogames.userId = users.userId
+        JOIN 
+            filterCategory
+        ON 
+            videogames.videogameId = filterCategory.videogameId 
+        JOIN 
+            filterLanguage
+        ON 
+            videogames.videogameId = filterLanguage.videogameId
+        JOIN 
+            filterOperatingSystem
+        ON 
+            videogames.videogameId = filterOperatingSystem.videogameId
+        JOIN 
+            filterPlayers
+        ON 
+            videogames.videogameId = filterPlayers.videogameId
+        WHERE 
+            videogames.userId = ?;`
+
+    const videogamesCount = await databaseExecute(querry, [userId])
+    
+    if (!videogamesCount) return false
+
+    return videogamesCount[0].videogamesCount;
+}
+
+export const obtainVideogameUploadsDetailsSVC = async (videogameId) => {
+        
+        const querry = `
+            SELECT 
+                videogames.videogameId, videogames.name, videogames.price, videogames.photo, videogames.description, videogames.minRequirements, videogames.recRequirements, filterCategory.Aventura, filterCategory.Acción, filterCategory.RPG, filterCategory.MOBA, filterLanguage.Español, filterLanguage.Ingles, filterLanguage.Chino, filterLanguage.Portugues, filterLanguage.Japones, filterOperatingSystem.Windows, filterOperatingSystem.MacOS, filterOperatingSystem.Linux, filterPlayers.SinglePlayer, filterPlayers.MultiPlayer
+            FROM 
+                videogames 
+            JOIN
+                users
+            ON
+                videogames.userId = users.userId
+            JOIN 
+                filterCategory
+            ON 
+                videogames.videogameId = filterCategory.videogameId 
+            JOIN 
+                filterLanguage
+            ON 
+                videogames.videogameId = filterLanguage.videogameId
+            JOIN 
+                filterOperatingSystem
+            ON 
+                videogames.videogameId = filterOperatingSystem.videogameId
+            JOIN 
+                filterPlayers
+            ON 
+                videogames.videogameId = filterPlayers.videogameId
+            WHERE 
+                videogames.videogameId = ?;`
+    
+        const videogame = await databaseExecute(querry, [videogameId])
+    
+        if (!videogame) return false
+    
+        return videogame;
+}
