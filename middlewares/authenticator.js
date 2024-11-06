@@ -8,7 +8,7 @@ export const generateToken = (jwtData) => {
 export const validateToken = (req, res, next) => {
 
     const accessToken = req.cookies.auth || null //Si no encuentra .auth, el token es nulo "rechaza"
-    
+
     if (!accessToken) return res.status(401).send('Access denied')
 
     else {
@@ -19,6 +19,7 @@ export const validateToken = (req, res, next) => {
             }
             else {
                 res.locals.userData = {userId:jwtData.userId, role:jwtData.role}
+                
                 next()
             }
         })
