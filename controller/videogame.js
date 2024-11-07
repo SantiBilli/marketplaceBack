@@ -1,4 +1,4 @@
-import { obtainVideogamesCountSVC, obtainVideogamesDetailSVC, obtainVideogamesSVC, obtainVideogamesUploadsCountSVC, obtainVideogamesUploadsSVC, obtainVideogameUploadsDetailsSVC, registerVideogamesSVC } from "../services/videogame.js"
+import { deleteVideogameSVC, editVideogameUploadSVC, obtainVideogamesCountSVC, obtainVideogamesDetailSVC, obtainVideogamesSVC, obtainVideogamesUploadsCountSVC, obtainVideogamesUploadsSVC, obtainVideogameUploadsDetailsSVC, registerVideogamesSVC } from "../services/videogame.js"
 import fs from "fs"
 
 export const registerVideogamesCTL = async (req, res, next) => {
@@ -98,5 +98,37 @@ export const obtainVideogameUploadsDetailsCTL = async (req, res, next) => {
 
     res.locals.response = {data: videogame}
 
+    next()
+}
+
+export const editVideogameUploadCTL = async (req, res, next) => {
+    
+    const {id, name, description, minRequirements, recRequirements, price, filters, visible} = req.body
+
+    const file = req.file;
+
+    const info = await obtainVideogameUploadsDetailsSVC(id)
+    const photo = info.videogame.photo
+    
+    const activeFilters = filters.split(',')
+
+    if (file) {
+        fs.unlinkSync(`uploads/videogamePhotos/${photo}`);
+    }
+
+    const videogameEdit = await editVideogameUploadSVC(id, name, description, file ? file.filename : photo, activeFilters, minRequirements, recRequirements, price, visible)
+    
+    if (!videogameEdit) res.status(500)
+
+    next()
+}
+
+export const deleteVideogameCTL = async (req, res, next) => {
+    const videogameId = req.params.videogameId
+
+    const videogameDelete = await deleteVideogameSVC(videogameId)
+
+    if (!videogameDelete) res.status(500)
+    
     next()
 }
