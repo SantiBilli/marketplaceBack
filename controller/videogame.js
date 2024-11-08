@@ -43,7 +43,7 @@ export const registerVideogamesCTL = async (req, res, next) => {
 };
 
 export const obtainVideogamesCTL = async (req, res, next) => {
-  let { filters, qualification, page, limit, minPrice, maxPrice } = req.query;
+  let { filters, qualification, page, limit, minPrice, maxPrice, search } = req.query;
 
   if (minPrice == 'null' || minPrice == 'undefined' || minPrice == '') {
     minPrice = 0;
@@ -66,9 +66,16 @@ export const obtainVideogamesCTL = async (req, res, next) => {
     }
   }
 
-  const videogames = await obtainVideogamesSVC(filtersArray, qualification, page, limit, minPrice, maxPrice);
-  const count = await obtainVideogamesCountSVC(filtersArray, qualification, minPrice, maxPrice);
-  console.log(count);
+  const videogames = await obtainVideogamesSVC(
+    filtersArray,
+    qualification,
+    page,
+    limit,
+    minPrice,
+    maxPrice,
+    search
+  );
+  const count = await obtainVideogamesCountSVC(filtersArray, qualification, minPrice, maxPrice, search);
 
   if (!videogames) res.status(500);
 

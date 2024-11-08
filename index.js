@@ -13,6 +13,7 @@ import reviewsRouter from './routes/reviews.js';
 import wishlistRouter from './routes/wishlist.js';
 import statsRouter from './routes/stats.js';
 import forgotPasswordRouter from './routes/forgotPassword.js';
+import paymentRouter from './routes/payment.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,6 +39,7 @@ app.use(reviewsRouter);
 app.use(wishlistRouter);
 app.use(statsRouter);
 app.use(forgotPasswordRouter);
+app.use(paymentRouter);
 
 app.use('/videogame', express.static(videogamesDirectory));
 app.use('/pfp', express.static(pfpDirectory));

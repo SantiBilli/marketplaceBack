@@ -76,7 +76,8 @@ export const obtainVideogamesSVC = async (
   page,
   limit,
   minPrice,
-  maxPrice
+  maxPrice,
+  search
 ) => {
   let querryArray = [];
 
@@ -122,6 +123,11 @@ export const obtainVideogamesSVC = async (
   if (maxPrice !== Infinity) {
     querry += `AND price <= ? `;
     querryArray.push(Number(maxPrice));
+  }
+
+  if (search) {
+    querry += `AND videogames.name LIKE ? `;
+    querryArray.push(`%${search}%`);
   }
 
   querry += `LIMIT ? OFFSET ?;`;
@@ -173,10 +179,14 @@ export const obtainVideogamesDetailSVC = async videogameId => {
   return videogame;
 };
 
-export const obtainVideogamesCountSVC = async (filtersArray = [], qualification, minPrice, maxPrice) => {
+export const obtainVideogamesCountSVC = async (
+  filtersArray = [],
+  qualification,
+  minPrice,
+  maxPrice,
+  search
+) => {
   let querryArray = [];
-
-  console.log(Number(minPrice), maxPrice);
 
   let querry = `
         SELECT 
@@ -222,8 +232,10 @@ export const obtainVideogamesCountSVC = async (filtersArray = [], qualification,
     querryArray.push(Number(maxPrice));
   }
 
-  console.log(querry);
-  console.log(querryArray);
+  if (search) {
+    querry += `AND videogames.name LIKE ? `;
+    querryArray.push(`%${search}%`);
+  }
 
   const videogamesCount = await databaseExecute(querry, querryArray);
 
