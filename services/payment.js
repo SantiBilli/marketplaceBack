@@ -2,10 +2,14 @@ import { databaseExecute } from '../database/database.js';
 
 export const addToLibrarySVC = async (videogameId, userId) => {
   const querry = `INSERT INTO library (videogameId, userId) VALUES (?, ?)`;
+  const querryStats = 'UPDATE videogames SET purchases = purchases + 1 WHERE videogameId = ?';
+  const deleteWishList = 'DELETE FROM wishlist WHERE videogameId = ? AND userId = ?';
 
   const response = await databaseExecute(querry, [videogameId, userId]);
+  const response2 = await databaseExecute(querryStats, [videogameId]);
+  const response3 = await databaseExecute(deleteWishList, [videogameId, userId]);
 
-  if (!response) return true;
+  if (!response || !response2 || !response3) return false;
 
   return true;
 };

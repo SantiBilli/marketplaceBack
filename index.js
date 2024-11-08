@@ -14,6 +14,7 @@ import wishlistRouter from './routes/wishlist.js';
 import statsRouter from './routes/stats.js';
 import forgotPasswordRouter from './routes/forgotPassword.js';
 import paymentRouter from './routes/payment.js';
+import libraryRouter from './routes/library.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,6 +41,7 @@ app.use(wishlistRouter);
 app.use(statsRouter);
 app.use(forgotPasswordRouter);
 app.use(paymentRouter);
+app.use(libraryRouter);
 
 app.use('/videogame', express.static(videogamesDirectory));
 app.use('/pfp', express.static(pfpDirectory));

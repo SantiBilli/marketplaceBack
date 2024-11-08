@@ -5,11 +5,7 @@ export const paymentCTL = async (req, res, next) => {
   const bodyParams = req.body;
   const userData = res.locals.userData;
 
-  console.log(bodyParams);
-  console.log(videogameId);
-  console.log(userData);
-
-  if (bodyParams.cardNumber != '0000000000000000') {
+  if (bodyParams.cardNumber != '0000000000000000' && bodyParams.price != 0) {
     res.status(498);
     return next();
   }
