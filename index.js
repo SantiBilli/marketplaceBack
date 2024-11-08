@@ -12,6 +12,8 @@ import validateTokenRouter from "./routes/validateToken.js";
 import reviewsRouter from "./routes/reviews.js";
 import wishlistRouter from "./routes/wishlist.js";
 import statsRouter from "./routes/stats.js";
+import forgotPasswordRouter from "./routes/forgotPassword.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,6 +40,7 @@ app.use(validateTokenRouter)
 app.use(reviewsRouter)
 app.use(wishlistRouter)
 app.use(statsRouter)
+app.use(forgotPasswordRouter)
 
 app.use('/videogame', express.static(videogamesDirectory))
 app.use('/pfp', express.static(pfpDirectory))
