@@ -1,11 +1,9 @@
-import { generateToken } from "./authenticator.js"
+import { generateToken } from './authenticator.js';
 
 export const cookieSender = (req, res) => {
+  const payload = res.locals.userData || null;
 
-    const payload = res.locals.userData || null 
+  const token = generateToken(payload); //Inactividad
 
-    const token = generateToken(payload) //Inactividad
-    
-    return res.cookie("auth", token).json(res.locals.response?.data)
-
-}
+  return res.cookie('auth', token).json(res.locals.response?.data);
+};

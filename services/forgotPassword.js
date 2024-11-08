@@ -1,49 +1,43 @@
-import { databaseExecute } from "../database/database.js";
-import bcrypt from "bcrypt"
+import { databaseExecute } from '../database/database.js';
+import bcrypt from 'bcrypt';
 
-export const forgotPasswordSVC = async (email) => {
+export const forgotPasswordSVC = async email => {
+  const consulta = 'SELECT userId FROM users WHERE email = ?';
 
-    const consulta = "SELECT userId FROM users WHERE email = ?"
+  const results = await databaseExecute(consulta, [email]);
 
-    const results = await databaseExecute(consulta, [email])
+  if (results.length == 0) {
+    return false;
+  }
 
-    if (results.length == 0) {
-        return false
-    }
-    
-    return true;
-    
-}
+  return true;
+};
 
 export const userTokenSVC = async (email, token) => {
+  const consulta = 'UPDATE users SET reset_token = ? WHERE email = ?';
+  const results = await databaseExecute(consulta, [token, email]);
 
-    const consulta = "UPDATE users SET reset_token = ? WHERE email = ?"
-    const results = await databaseExecute(consulta, [token, email])
+  if (!results) return 500;
 
-    if (!results) return 500
+  return true;
+};
 
-    return true
-}
+export const obtainTokenUserSVC = async token => {
+  const consulta = 'SELECT userId FROM users WHERE reset_token = ?';
+  const results = await databaseExecute(consulta, [token]);
+  if (results.length == 0) {
+    return false;
+  }
 
-
-export const obtainTokenUserSVC = async (token) => {
-    const consulta = "SELECT userId FROM users WHERE reset_token = ?"
-    const results = await databaseExecute(consulta, [token])
-    if (results.length == 0) {
-        return false
-    }
-
-    return results[0].userId
-
-}
+  return results[0].userId;
+};
 
 export const updatePasswordSVC = async (userId, password) => {
-    const consulta = "UPDATE users SET password = ?, reset_token = NULL WHERE userId = ?"
+  const consulta = 'UPDATE users SET password = ?, reset_token = NULL WHERE userId = ?';
 
-    const results = await databaseExecute(consulta, [password, userId])
+  const results = await databaseExecute(consulta, [password, userId]);
 
-    if (!results) return 500
+  if (!results) return 500;
 
-    return true
-
-}
+  return true;
+};

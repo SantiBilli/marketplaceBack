@@ -67,15 +67,3 @@ export const changePasswordCTL = async (req, res) => {
 
   return res.status(200).send();
 };
-
-// export const CambiarContraseñaCTL = async (req, res) => {
-
-//     const bodyParams = req.body
-//     const jwt = req.jwtData
-
-//     const response = await CambiarContraseñaSVC(bodyParams.contra, jwt.userId)
-
-//     if (!response) return res.status(204).send("User Not Found")
-
-//     return res.send()
-// }
