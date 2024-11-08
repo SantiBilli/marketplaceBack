@@ -1,16 +1,15 @@
-import { databaseExecute } from "../database/database.js";
+import { databaseExecute } from '../database/database.js';
 
-export const obtainPassword = async (email) => {
-    
-    const userData = "SELECT userId, password, role FROM users WHERE email = ?"
+export const obtainPassword = async email => {
+  const userData = 'SELECT userId, password, role FROM users WHERE email = ?';
 
-    const results = await databaseExecute(userData, [email])
+  const results = await databaseExecute(userData, [email]);
 
-    if (!results) return 500
+  if (!results) return 500;
 
-    if (results.length == 0) {
-        return false
-    }
+  if (results.length == 0) {
+    return false;
+  }
 
-    return results[0];
-}
+  return results[0];
+};

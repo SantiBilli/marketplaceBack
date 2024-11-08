@@ -1,10 +1,10 @@
-import { Router } from "express"
-import { forgotPasswordCTL, changePasswordCTL } from "../controller/forgotPassword.js";
+import { Router } from 'express';
+import { forgotPasswordCTL, changePasswordCTL } from '../controller/forgotPassword.js';
 
-const forgotPasswordRouter = Router()
+const forgotPasswordRouter = Router();
 
-forgotPasswordRouter.post("/forget-password", forgotPasswordCTL)
+forgotPasswordRouter.post('/forget-password', forgotPasswordCTL);
 
-forgotPasswordRouter.post("/change-password/:token", changePasswordCTL)
+forgotPasswordRouter.post('/change-password/:token', changePasswordCTL);
 
-export default forgotPasswordRouter
+export default forgotPasswordRouter;

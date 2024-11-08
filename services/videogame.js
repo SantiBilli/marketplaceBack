@@ -1,33 +1,86 @@
-import { databaseExecute } from "../database/database.js"
-import { v4 } from "uuid"
+import { databaseExecute } from '../database/database.js';
+import { v4 } from 'uuid';
 
-export const registerVideogamesSVC = async (name, description, photo, filters, minRequirements, recRequirements, price, userId) => {
+export const registerVideogamesSVC = async (
+  name,
+  description,
+  photo,
+  filters,
+  minRequirements,
+  recRequirements,
+  price,
+  userId
+) => {
+  const videogameId = v4();
 
-    const videogameId = v4()
+  const insertVideogame =
+    'INSERT INTO videogames (videogameId, userId, name, description, photo, minRequirements, recRequirements, price, views, purchases, wishlists, qualification) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const resultsInsert = await databaseExecute(insertVideogame, [
+    videogameId,
+    userId,
+    name,
+    description,
+    photo,
+    minRequirements,
+    recRequirements,
+    price,
+    0,
+    0,
+    0,
+    0,
+  ]);
 
-    const insertVideogame = "INSERT INTO videogames (videogameId, userId, name, description, photo, minRequirements, recRequirements, price, views, purchases, wishlists, qualification) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    const resultsInsert = await databaseExecute(insertVideogame, [videogameId, userId, name, description, photo, minRequirements, recRequirements, price, 0, 0, 0, 0])
+  const insertCategory =
+    'INSERT INTO filterCategory (videogameId, Aventura, Acción, RPG, MOBA) VALUES (?, ?, ?, ?, ?)';
+  const resultsCategory = await databaseExecute(insertCategory, [
+    videogameId,
+    filters.includes('Aventura') ? 1 : 0,
+    filters.includes('Acción') ? 1 : 0,
+    filters.includes('RPG') ? 1 : 0,
+    filters.includes('MOBA') ? 1 : 0,
+  ]);
 
-    const insertCategory = "INSERT INTO filterCategory (videogameId, Aventura, Acción, RPG, MOBA) VALUES (?, ?, ?, ?, ?)"
-    const resultsCategory = await databaseExecute(insertCategory, [videogameId, filters.includes("Aventura") ? 1 : 0, filters.includes("Acción") ? 1 : 0, filters.includes("RPG") ? 1 : 0, filters.includes("MOBA") ? 1 : 0])
+  const insertOperatingSystem =
+    'INSERT INTO filterOperatingSystem (videogameId, Windows, MacOS, Linux) VALUES (?, ?, ?, ?)';
+  const resultsOperatingSystem = await databaseExecute(insertOperatingSystem, [
+    videogameId,
+    filters.includes('Windows') ? 1 : 0,
+    filters.includes('MacOS') ? 1 : 0,
+    filters.includes('Linux') ? 1 : 0,
+  ]);
 
-    const insertOperatingSystem = "INSERT INTO filterOperatingSystem (videogameId, Windows, MacOS, Linux) VALUES (?, ?, ?, ?)"
-    const resultsOperatingSystem = await databaseExecute(insertOperatingSystem, [videogameId, filters.includes("Windows") ? 1 : 0, filters.includes("MacOS") ? 1 : 0, filters.includes("Linux") ? 1 : 0])
+  const insertLanguage =
+    'INSERT INTO filterLanguage (videogameId, Español, Ingles, Chino, Portugues, Japones) VALUES (?, ?, ?, ?, ?, ?)';
+  const resultsLanguage = await databaseExecute(insertLanguage, [
+    videogameId,
+    filters.includes('Español') ? 1 : 0,
+    filters.includes('Ingles') ? 1 : 0,
+    filters.includes('Chino') ? 1 : 0,
+    filters.includes('Portugues') ? 1 : 0,
+    filters.includes('Japones') ? 1 : 0,
+  ]);
 
-    const insertLanguage = "INSERT INTO filterLanguage (videogameId, Español, Ingles, Chino, Portugues, Japones) VALUES (?, ?, ?, ?, ?, ?)"
-    const resultsLanguage = await databaseExecute(insertLanguage, [videogameId, filters.includes("Español") ? 1 : 0, filters.includes("Ingles") ? 1 : 0, filters.includes("Chino") ? 1 : 0, filters.includes("Portugues") ? 1 : 0, filters.includes("Japones") ? 1 : 0])
+  const insertPlayers = 'INSERT INTO filterPlayers (videogameId, SinglePlayer, MultiPlayer) VALUES (?, ?, ?)';
+  const resultsPlayers = await databaseExecute(insertPlayers, [
+    videogameId,
+    filters.includes('Single-Player') ? 1 : 0,
+    filters.includes('Multi-Player') ? 1 : 0,
+  ]);
 
-    const insertPlayers = "INSERT INTO filterPlayers (videogameId, SinglePlayer, MultiPlayer) VALUES (?, ?, ?)"
-    const resultsPlayers = await databaseExecute(insertPlayers, [videogameId, filters.includes("Single-Player") ? 1 : 0, filters.includes("Multi-Player") ? 1 : 0])
+  return true;
+};
 
-    return true;
-}
+export const obtainVideogamesSVC = async (
+  filtersArray = [],
+  qualification,
+  page,
+  limit,
+  minPrice,
+  maxPrice
+) => {
+  let querryArray = [];
 
-export const obtainVideogamesSVC = async (filtersArray = [], qualification, page, limit) => {
-    
-    let querryArray = []
-
-    let querry = `
+  let querry = `
         SELECT 
             videogames.videogameId, videogames.name, videogames.price, videogames.photo
         FROM 
@@ -52,32 +105,37 @@ export const obtainVideogamesSVC = async (filtersArray = [], qualification, page
             filterPlayers
         ON 
             videogames.videogameId = filterPlayers.videogameId
-        WHERE visible=1 `
+        WHERE visible=1 `;
 
-    filtersArray.forEach((filter) => {
-        querry += `AND ${filter} = 1 `;
-    }
-    );
+  filtersArray.forEach(filter => {
+    querry += `AND ${filter} = 1 `;
+  });
 
-    if (qualification) {
-        querry += `AND qualification = ?`;
-        querryArray.push(qualification);
-    }
+  if (qualification) {
+    querry += `AND qualification = ?`;
+    querryArray.push(qualification);
+  }
 
-    querry += `LIMIT ? OFFSET ?;`
-    querryArray.push(Number(limit), (page - 1) * limit)
+  querry += `AND price >= ? `;
+  querryArray.push(Number(minPrice));
 
-    
-    const videogames = await databaseExecute(querry, querryArray)
-    
-    if (!videogames) return false
+  if (maxPrice !== Infinity) {
+    querry += `AND price <= ? `;
+    querryArray.push(Number(maxPrice));
+  }
 
-    return videogames;
-}
+  querry += `LIMIT ? OFFSET ?;`;
+  querryArray.push(Number(limit), (page - 1) * limit);
 
-export const obtainVideogamesDetailSVC = async (videogameId) => {
-        
-    const querry = `
+  const videogames = await databaseExecute(querry, querryArray);
+
+  if (!videogames) return false;
+
+  return videogames;
+};
+
+export const obtainVideogamesDetailSVC = async videogameId => {
+  const querry = `
         SELECT 
             videogames.videogameId, videogames.name vg_name, videogames.price, videogames.photo, videogames.description vg_description, videogames.minRequirements, videogames.recRequirements, users.name, users.pfp, users.description
         FROM 
@@ -103,23 +161,24 @@ export const obtainVideogamesDetailSVC = async (videogameId) => {
         ON 
             videogames.videogameId = filterPlayers.videogameId
         WHERE 
-            videogames.videogameId = ?;`
+            videogames.videogameId = ?;`;
 
-    const addView = `UPDATE videogames SET views = views + 1 WHERE videogameId = ?`
+  const addView = `UPDATE videogames SET views = views + 1 WHERE videogameId = ?`;
 
-    const videogame = await databaseExecute(querry, [videogameId])
-    const view = await databaseExecute(addView, [videogameId])
+  const videogame = await databaseExecute(querry, [videogameId]);
+  const view = await databaseExecute(addView, [videogameId]);
 
-    if (!videogame || !view) return false
+  if (!videogame || !view) return false;
 
-    return videogame;
-}
+  return videogame;
+};
 
-export const obtainVideogamesCountSVC = async (filtersArray = [], qualification) => {
-    
-    let querryArray = []
+export const obtainVideogamesCountSVC = async (filtersArray = [], qualification, minPrice, maxPrice) => {
+  let querryArray = [];
 
-    let querry = `
+  console.log(Number(minPrice), maxPrice);
+
+  let querry = `
         SELECT 
             COUNT(videogames.videogameId) as videogamesCount
         FROM 
@@ -144,30 +203,39 @@ export const obtainVideogamesCountSVC = async (filtersArray = [], qualification)
             filterPlayers
         ON 
             videogames.videogameId = filterPlayers.videogameId
-        WHERE visible=1 `
+        WHERE visible=1 `;
 
-    filtersArray.forEach((filter) => {
-        querry += `AND ${filter} = 1 `;
-    }
-    );
+  filtersArray.forEach(filter => {
+    querry += `AND ${filter} = 1 `;
+  });
 
-    if (qualification) {
-        querry += `AND qualification = ?`;
-        querryArray.push(qualification);
-    }
+  if (qualification) {
+    querry += `AND qualification = ?`;
+    querryArray.push(qualification);
+  }
 
-    const videogamesCount = await databaseExecute(querry, querryArray)
-    
-    if (!videogamesCount) return false
+  querry += `AND price >= ? `;
+  querryArray.push(Number(minPrice));
 
-    return videogamesCount;
-}
+  if (maxPrice !== Infinity) {
+    querry += `AND price <= ? `;
+    querryArray.push(Number(maxPrice));
+  }
+
+  console.log(querry);
+  console.log(querryArray);
+
+  const videogamesCount = await databaseExecute(querry, querryArray);
+
+  if (!videogamesCount) return false;
+
+  return videogamesCount;
+};
 
 export const obtainVideogamesUploadsSVC = async (userId, page, limit) => {
-        
-        let querryArray = [userId]
+  let querryArray = [userId];
 
-        let querry = `
+  let querry = `
             SELECT 
                 videogames.videogameId, videogames.name, videogames.price, videogames.photo
             FROM 
@@ -193,22 +261,21 @@ export const obtainVideogamesUploadsSVC = async (userId, page, limit) => {
             ON 
                 videogames.videogameId = filterPlayers.videogameId
             WHERE 
-                videogames.userId = ?`
+                videogames.userId = ?`;
 
-        querry += `LIMIT ? OFFSET ?;`
+  querry += `LIMIT ? OFFSET ?;`;
 
-        querryArray.push(Number(limit), (page - 1) * limit)
-    
-        const videogames = await databaseExecute(querry, querryArray)
-        
-        if (!videogames) return false
-    
-        return videogames;
-}
+  querryArray.push(Number(limit), (page - 1) * limit);
 
-export const obtainVideogamesUploadsCountSVC = async (userId) => {
-    
-    const querry = `
+  const videogames = await databaseExecute(querry, querryArray);
+
+  if (!videogames) return false;
+
+  return videogames;
+};
+
+export const obtainVideogamesUploadsCountSVC = async userId => {
+  const querry = `
         SELECT 
             COUNT(videogames.videogameId) as videogamesCount
         FROM 
@@ -234,18 +301,17 @@ export const obtainVideogamesUploadsCountSVC = async (userId) => {
         ON 
             videogames.videogameId = filterPlayers.videogameId
         WHERE 
-            videogames.userId = ?;`
+            videogames.userId = ?;`;
 
-    const videogamesCount = await databaseExecute(querry, [userId])
-    
-    if (!videogamesCount) return false
+  const videogamesCount = await databaseExecute(querry, [userId]);
 
-    return videogamesCount[0].videogamesCount;
-}
+  if (!videogamesCount) return false;
 
-export const obtainVideogameUploadsDetailsSVC = async (videogameId) => {
-        
-        const querry = `
+  return videogamesCount[0].videogamesCount;
+};
+
+export const obtainVideogameUploadsDetailsSVC = async videogameId => {
+  const querry = `
             SELECT 
                 videogames.videogameId, videogames.name, videogames.price, videogames.photo, videogames.description, videogames.minRequirements, videogames.recRequirements, videogames.visible
             FROM 
@@ -267,11 +333,11 @@ export const obtainVideogameUploadsDetailsSVC = async (videogameId) => {
             ON 
                 videogames.videogameId = filterPlayers.videogameId
             WHERE 
-                videogames.videogameId = ?;`
-    
-        const videogame = await databaseExecute(querry, [videogameId])
-    
-        const querryFilters = `
+                videogames.videogameId = ?;`;
+
+  const videogame = await databaseExecute(querry, [videogameId]);
+
+  const querryFilters = `
             SELECT 
                 filterCategory.Aventura, filterCategory.Acción, filterCategory.RPG, filterCategory.MOBA, filterLanguage.Español, filterLanguage.Ingles, filterLanguage.Chino, filterLanguage.Portugues, filterLanguage.Japones, filterOperatingSystem.Windows, filterOperatingSystem.MacOS, filterOperatingSystem.Linux, filterPlayers.SinglePlayer, filterPlayers.MultiPlayer
             FROM 
@@ -293,59 +359,102 @@ export const obtainVideogameUploadsDetailsSVC = async (videogameId) => {
             ON 
                 videogames.videogameId = filterPlayers.videogameId
             WHERE 
-                videogames.videogameId = ?;`
+                videogames.videogameId = ?;`;
 
-        const videogameFilters = await databaseExecute(querryFilters, [videogameId])
+  const videogameFilters = await databaseExecute(querryFilters, [videogameId]);
 
-        const filters = videogameFilters[0];
+  const filters = videogameFilters[0];
 
-        let activeFilters = Object.keys(filters).filter(key => filters[key] === 1);
+  let activeFilters = Object.keys(filters).filter(key => filters[key] === 1);
 
-        activeFilters = activeFilters.map(key => {
-            if (key === 'SinglePlayer') return 'Single-Player';
-            if (key === 'MultiPlayer') return 'Multi-Player';
-            return key;
-          });
+  activeFilters = activeFilters.map(key => {
+    if (key === 'SinglePlayer') return 'Single-Player';
+    if (key === 'MultiPlayer') return 'Multi-Player';
+    return key;
+  });
 
+  if (!videogame || !videogameFilters) return false;
 
-        if (!videogame || !videogameFilters) return false
+  const info = {
+    videogame: videogame[0],
+    filters: activeFilters,
+  };
 
-        const info = {
-            videogame: videogame[0],
-            filters: activeFilters
-        }
-    
-        return info;
-}
+  return info;
+};
 
-export const editVideogameUploadSVC = async (videogameId, name, description, photo, filters, minRequirements, recRequirements, price, visible) => {
-        
-        const updateVideogame = "UPDATE videogames SET name = ?, description = ?, photo = ?, minRequirements = ?, recRequirements = ?, price = ?, visible = ? WHERE videogameId = ?"
-        const resultsUpdate = await databaseExecute(updateVideogame, [name, description, photo, minRequirements, recRequirements, price, visible, videogameId])
-    
-        const updateCategory = "UPDATE filterCategory SET Aventura = ?, Acción = ?, RPG = ?, MOBA = ? WHERE videogameId = ?"
-        const resultsCategory = await databaseExecute(updateCategory, [filters.includes("Aventura") ? 1 : 0, filters.includes("Acción") ? 1 : 0, filters.includes("RPG") ? 1 : 0, filters.includes("MOBA") ? 1 : 0, videogameId])
-    
-        const updateOperatingSystem = "UPDATE filterOperatingSystem SET Windows = ?, MacOS = ?, Linux = ? WHERE videogameId = ?"
-        const resultsOperatingSystem = await databaseExecute(updateOperatingSystem, [filters.includes("Windows") ? 1 : 0, filters.includes("MacOS") ? 1 : 0, filters.includes("Linux") ? 1 : 0, videogameId])
-    
-        const updateLanguage = "UPDATE filterLanguage SET Español = ?, Ingles = ?, Chino = ?, Portugues = ?, Japones = ? WHERE videogameId = ?"
-        const resultsLanguage = await databaseExecute(updateLanguage, [filters.includes("Español") ? 1 : 0, filters.includes("Ingles") ? 1 : 0, filters.includes("Chino") ? 1 : 0, filters.includes("Portugues") ? 1 : 0, filters.includes("Japones") ? 1 : 0, videogameId])
-    
-        const updatePlayers = "UPDATE filterPlayers SET SinglePlayer = ?, MultiPlayer = ? WHERE videogameId = ?"
-        const resultsPlayers = await databaseExecute(updatePlayers, [filters.includes("Single-Player") ? 1 : 0, filters.includes("Multi-Player") ? 1 : 0, videogameId])
-    
-        if (!resultsUpdate || !resultsCategory || !resultsOperatingSystem || !resultsLanguage || !resultsPlayers) return false;
+export const editVideogameUploadSVC = async (
+  videogameId,
+  name,
+  description,
+  photo,
+  filters,
+  minRequirements,
+  recRequirements,
+  price,
+  visible
+) => {
+  const updateVideogame =
+    'UPDATE videogames SET name = ?, description = ?, photo = ?, minRequirements = ?, recRequirements = ?, price = ?, visible = ? WHERE videogameId = ?';
+  const resultsUpdate = await databaseExecute(updateVideogame, [
+    name,
+    description,
+    photo,
+    minRequirements,
+    recRequirements,
+    price,
+    visible,
+    videogameId,
+  ]);
 
-        return true;
-}
+  const updateCategory =
+    'UPDATE filterCategory SET Aventura = ?, Acción = ?, RPG = ?, MOBA = ? WHERE videogameId = ?';
+  const resultsCategory = await databaseExecute(updateCategory, [
+    filters.includes('Aventura') ? 1 : 0,
+    filters.includes('Acción') ? 1 : 0,
+    filters.includes('RPG') ? 1 : 0,
+    filters.includes('MOBA') ? 1 : 0,
+    videogameId,
+  ]);
 
-export const deleteVideogameSVC = async (videogameId) => {
-            
-    const deleteVideogame = "DELETE FROM videogames WHERE videogameId = ?"
-    const resultsDelete = await databaseExecute(deleteVideogame, [videogameId])
+  const updateOperatingSystem =
+    'UPDATE filterOperatingSystem SET Windows = ?, MacOS = ?, Linux = ? WHERE videogameId = ?';
+  const resultsOperatingSystem = await databaseExecute(updateOperatingSystem, [
+    filters.includes('Windows') ? 1 : 0,
+    filters.includes('MacOS') ? 1 : 0,
+    filters.includes('Linux') ? 1 : 0,
+    videogameId,
+  ]);
 
-    if (!resultsDelete) return false;
+  const updateLanguage =
+    'UPDATE filterLanguage SET Español = ?, Ingles = ?, Chino = ?, Portugues = ?, Japones = ? WHERE videogameId = ?';
+  const resultsLanguage = await databaseExecute(updateLanguage, [
+    filters.includes('Español') ? 1 : 0,
+    filters.includes('Ingles') ? 1 : 0,
+    filters.includes('Chino') ? 1 : 0,
+    filters.includes('Portugues') ? 1 : 0,
+    filters.includes('Japones') ? 1 : 0,
+    videogameId,
+  ]);
 
-    return true;
-}
+  const updatePlayers = 'UPDATE filterPlayers SET SinglePlayer = ?, MultiPlayer = ? WHERE videogameId = ?';
+  const resultsPlayers = await databaseExecute(updatePlayers, [
+    filters.includes('Single-Player') ? 1 : 0,
+    filters.includes('Multi-Player') ? 1 : 0,
+    videogameId,
+  ]);
+
+  if (!resultsUpdate || !resultsCategory || !resultsOperatingSystem || !resultsLanguage || !resultsPlayers)
+    return false;
+
+  return true;
+};
+
+export const deleteVideogameSVC = async videogameId => {
+  const deleteVideogame = 'DELETE FROM videogames WHERE videogameId = ?';
+  const resultsDelete = await databaseExecute(deleteVideogame, [videogameId]);
+
+  if (!resultsDelete) return false;
+
+  return true;
+};
