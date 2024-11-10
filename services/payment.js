@@ -20,7 +20,7 @@ export const addToLibrarySVC = async (videogameId, userId) => {
   const response2 = await databaseExecute(querryStats, [videogameId]);
   const response3 = await databaseExecute(deleteWishList, [videogameId, userId]);
 
-  if (response3.affectedRows === 0) {
+  if (response3.affectedRows === 1) {
     const updateWishlistVideogames = 'UPDATE videogames SET wishlists = wishlists - 1 WHERE videogameId = ?';
     const response4 = await databaseExecute(updateWishlistVideogames, [videogameId]);
 
