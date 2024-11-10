@@ -35,7 +35,7 @@ export const insertReviewSVC = async (videogameId, userId, description, stars) =
 export const obtainReviewsSVC = async (videogameId, page, limit) => {
   let querryArray = [videogameId];
 
-  let getReviews = `SELECT reviews.stars, reviews.description, users.name
+  let getReviews = `SELECT reviews.stars, reviews.description, users.name, reviews.insert_time
     FROM reviews
     JOIN users ON reviews.userId = users.userId
     WHERE videogameId = ? ORDER BY reviews.insert_time DESC `;

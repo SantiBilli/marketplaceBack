@@ -13,11 +13,19 @@ export const paymentVideogameDetailsSVC = async videogameId => {
 export const addToLibrarySVC = async (videogameId, userId) => {
   const querry = `INSERT INTO library (videogameId, userId) VALUES (?, ?)`;
   const querryStats = 'UPDATE videogames SET purchases = purchases + 1 WHERE videogameId = ?';
+
   const deleteWishList = 'DELETE FROM wishlist WHERE videogameId = ? AND userId = ?';
 
   const response = await databaseExecute(querry, [videogameId, userId]);
   const response2 = await databaseExecute(querryStats, [videogameId]);
   const response3 = await databaseExecute(deleteWishList, [videogameId, userId]);
+
+  if (response3.affectedRows === 0) {
+    const updateWishlistVideogames = 'UPDATE videogames SET wishlists = wishlists - 1 WHERE videogameId = ?';
+    const response4 = await databaseExecute(updateWishlistVideogames, [videogameId]);
+
+    if (response4 == false) return 500;
+  }
 
   if (!response || !response2 || !response3) return 500;
 
