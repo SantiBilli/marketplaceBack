@@ -1,4 +1,14 @@
-import { addToLibrarySVC } from '../services/payment.js';
+import { addToLibrarySVC, paymentVideogameDetailsSVC } from '../services/payment.js';
+
+export const paymentVideogameDetailsCTL = async (req, res, next) => {
+  const videogameId = req.params.videogameId;
+
+  const videogameDetail = await paymentVideogameDetailsSVC(videogameId);
+
+  res.locals.response = { data: videogameDetail };
+
+  next();
+};
 
 export const paymentCTL = async (req, res, next) => {
   const videogameId = req.params.videogameId;

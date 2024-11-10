@@ -20,6 +20,11 @@ export const modifyProfileCTL = async (req, res, next) => {
       res.status(409);
       return next();
     }
+
+    if (emailExists === 500) {
+      res.status(500);
+      return next();
+    }
   }
 
   if (req.file) {

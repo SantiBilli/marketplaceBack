@@ -156,7 +156,7 @@ export const editVideogameUploadCTL = async (req, res, next) => {
 
   if (info === 500) {
     res.status(500);
-    return next;
+    return next();
   }
 
   const photo = info.videogame.photo;
@@ -189,6 +189,15 @@ export const editVideogameUploadCTL = async (req, res, next) => {
 
 export const deleteVideogameCTL = async (req, res, next) => {
   const videogameId = req.params.videogameId;
+
+  const info = await obtainVideogameUploadsDetailsSVC(videogameId);
+
+  if (info === 500) {
+    res.status(500);
+    return next();
+  }
+
+  fs.unlinkSync(`uploads/videogamePhotos/${info.videogame.photo}`);
 
   const videogameDelete = await deleteVideogameSVC(videogameId);
 
