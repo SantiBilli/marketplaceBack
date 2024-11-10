@@ -14,8 +14,9 @@ export const obtainStatsCTL = async (req, res, next) => {
   const response = await obtainStatSVC(userId, page, limit);
   const count = await obtainStatsCountSVC(userId);
 
-  if (response === false || count === false) {
+  if (response === 500 || count === 500) {
     res.status(500);
+    return next();
   }
 
   res.locals.response = {

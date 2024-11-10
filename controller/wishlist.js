@@ -80,11 +80,8 @@ export const obtainVideogamesCTL = async (req, res, next) => {
   const wishlist = await wishlistObtainSVC(userId, page, limit);
   const wishlistCount = await wishlistObtainCountSVC(userId);
 
-  if (wishlist == 500) {
+  if (wishlist == 500 || wishlistCount == 500) {
     res.status(500);
-  }
-  if (wishlist == 204) {
-    res.status(204);
   }
 
   res.locals.response = {

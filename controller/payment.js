@@ -12,7 +12,7 @@ export const paymentCTL = async (req, res, next) => {
 
   const addToLibrary = await addToLibrarySVC(videogameId, userData.userId);
 
-  if (!addToLibrary) {
+  if (addToLibrary == 500) {
     res.status(500);
   }
 

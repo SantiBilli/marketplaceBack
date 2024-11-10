@@ -12,13 +12,12 @@ export const registerClientCTL = async (req, res) => {
     !bodyParams.date ||
     !bodyParams.password
   )
-    return res.status(400).send('Faltan Parametros.');
+    return res.status(400).send();
 
   const emailExists = await emailExistsSVC(bodyParams.email);
 
-  if (emailExists) {
-    return res.status(409).send('Email ya registrado.');
-  }
+  if (emailExists == 500) return res.status(500).send();
+  if (emailExists == 409) return res.status(409).send();
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(bodyParams.password, salt);
@@ -31,29 +30,30 @@ export const registerClientCTL = async (req, res) => {
     hashPassword
   );
 
-  if (!registerClientSVC == 500) return res.status(500).send('Database Error.');
+  if (registerClient == 500) return res.status(500).send();
 
-  return res.status(201).send('Usuario registrado exitosamente.');
+  return res.status(201).send();
 };
 
 export const registerBusinessCTL = async (req, res) => {
   const bodyParams = req.body;
 
   if (!req.file || !bodyParams.name || !bodyParams.email || !bodyParams.description || !bodyParams.password)
-    return res.status(400).send('Faltan Parametros.');
+    return res.status(400).send();
 
   const file = req.file;
   const logo = file.filename;
 
   const emailExists = await emailExistsSVC(bodyParams.email);
 
+  if (emailExists == 500) return res.status(500).send();
+  if (emailExists == 409) {
+    fs.unlinkSync(`uploads/profilePhotos/${logo}`);
+    return res.status(409).send();
+  }
+
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(bodyParams.password, salt);
-
-  if (emailExists) {
-    fs.unlinkSync(`uploads/profilePhotos/${logo}`);
-    return res.status(409).send('Email ya registrado.');
-  }
 
   const registerBusiness = await registerBusinessSVC(
     bodyParams.name,
@@ -63,7 +63,7 @@ export const registerBusinessCTL = async (req, res) => {
     hashPassword
   );
 
-  if (registerBusiness == 500) return res.status(500).send('Database Error.');
+  if (registerBusiness == 500) return res.status(500).send();
 
-  return res.status(201).send('Empresa registrada exitosamente.');
+  return res.status(201).send();
 };

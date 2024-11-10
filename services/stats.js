@@ -11,7 +11,7 @@ export const obtainStatSVC = async (userId, page, limit) => {
 
   const results = await databaseExecute(querry, querryArray);
 
-  if (!results) return false;
+  if (!results) return 500;
 
   return results;
 };
@@ -21,7 +21,7 @@ export const obtainStatsCountSVC = async userId => {
 
   const results = await databaseExecute(querry, [userId]);
 
-  if (!results) return false;
+  if (!results) return 500;
 
   return results[0].statsCount;
 };

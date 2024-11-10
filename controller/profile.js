@@ -7,7 +7,8 @@ export const modifyProfileCTL = async (req, res, next) => {
   const { name, surname, email, date, password, description } = req.body;
 
   if (!name && !surname && !email && !date && !password && !description && !req.file) {
-    return res.status(400).send('Faltan parámetros.');
+    res.status(400);
+    next();
   }
 
   const userId = res.locals.userData.userId;
@@ -64,6 +65,11 @@ export const getProfilesCTL = async (req, res, next) => {
   const userRole = userData.role;
 
   const profile = await obtainProfileSVC(userId, userRole);
+
+  if (profile == 500) {
+    res.status(500);
+    return next();
+  }
 
   res.locals.response = { data: profile };
 

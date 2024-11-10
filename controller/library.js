@@ -36,12 +36,9 @@ export const getLibraryCTL = async (req, res, next) => {
   const library = await getLibrarySVC(userId, page, limit);
   const libraryCount = await getLibraryCountSVC(userId);
 
-  if (library == 500) {
+  if (library == 500 || libraryCount == 500) {
     res.status(500);
-  }
-
-  if (library == 204) {
-    res.status(204);
+    return next();
   }
 
   res.locals.response = {

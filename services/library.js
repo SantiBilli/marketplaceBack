@@ -14,7 +14,7 @@ export const getLibrarySVC = async (userId, page, limit) => {
   let querryArray = [userId];
 
   let querry = `
-    SELECT 
+    SELECT
         library.videogameId, videogames.photo, videogames.name, videogames.price
     FROM 
         library
@@ -31,7 +31,6 @@ export const getLibrarySVC = async (userId, page, limit) => {
   const response = await databaseExecute(querry, querryArray);
 
   if (!response) return 500;
-  if (response.length == 0) return 204;
 
   return response;
 };

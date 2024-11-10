@@ -13,10 +13,13 @@ export const forgotPasswordCTL = async (req, res) => {
 
   const verifyEmail = await forgotPasswordSVC(bodyParams.email);
 
-  if (!verifyEmail) return res.status(401).send('Email Incorrecto'); //401 Unauthorized
+  if (verifyEmail == 404) return res.status(404).send();
+  if (verifyEmail == 500) return res.status(500).send();
 
   const resetToken = crypto.randomBytes(32).toString('hex');
   const token = await userTokenSVC(bodyParams.email, resetToken);
+
+  if (token == 500) return res.status(500).send();
 
   const link = `http://localhost:5173/changepassword/${resetToken}`;
 
@@ -49,21 +52,21 @@ export const forgotPasswordCTL = async (req, res) => {
     }
   });
 };
+
 export const changePasswordCTL = async (req, res) => {
   const token = req.params.token;
   const password = req.body.password;
 
   const userId = await obtainTokenUserSVC(token);
 
-  if (!userId) return res.status(498).send('User Not Found');
+  if (userId == 498) return res.status(498).send();
+  if (userId == 500) return res.status(500).send();
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(password, salt);
   const update = await updatePasswordSVC(userId, hashPassword);
 
-  if (update == 500) {
-    return res.status(500).send();
-  }
+  if (update == 500) return res.status(500).send();
 
   return res.status(200).send();
 };

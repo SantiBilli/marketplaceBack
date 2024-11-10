@@ -67,6 +67,9 @@ export const registerVideogamesSVC = async (
     filters.includes('Multi-Player') ? 1 : 0,
   ]);
 
+  if (!resultsInsert || !resultsCategory || !resultsOperatingSystem || !resultsLanguage || !resultsPlayers)
+    return 500;
+
   return true;
 };
 
@@ -82,8 +85,8 @@ export const obtainVideogamesSVC = async (
   let querryArray = [];
 
   let querry = `
-        SELECT 
-            videogames.videogameId, videogames.name, videogames.price, videogames.photo
+        SELECT
+            videogames.videogameId, videogames.name vg_name, videogames.price, videogames.photo
         FROM 
             videogames 
         JOIN
@@ -135,14 +138,14 @@ export const obtainVideogamesSVC = async (
 
   const videogames = await databaseExecute(querry, querryArray);
 
-  if (!videogames) return false;
+  if (!videogames) return 500;
 
   return videogames;
 };
 
 export const obtainVideogamesDetailSVC = async videogameId => {
   const querry = `
-        SELECT 
+        SELECT
             videogames.videogameId, videogames.name vg_name, videogames.price, videogames.photo, videogames.description vg_description, videogames.minRequirements, videogames.recRequirements, users.name, users.pfp, users.description
         FROM 
             videogames 
@@ -174,9 +177,9 @@ export const obtainVideogamesDetailSVC = async videogameId => {
   const videogame = await databaseExecute(querry, [videogameId]);
   const view = await databaseExecute(addView, [videogameId]);
 
-  if (!videogame || !view) return false;
+  if (!videogame || !view) return 500;
 
-  return videogame;
+  return videogame[0];
 };
 
 export const obtainVideogamesCountSVC = async (
@@ -189,7 +192,7 @@ export const obtainVideogamesCountSVC = async (
   let querryArray = [];
 
   let querry = `
-        SELECT 
+        SELECT
             COUNT(videogames.videogameId) as videogamesCount
         FROM 
             videogames
@@ -239,7 +242,7 @@ export const obtainVideogamesCountSVC = async (
 
   const videogamesCount = await databaseExecute(querry, querryArray);
 
-  if (!videogamesCount) return false;
+  if (!videogamesCount) return 500;
 
   return videogamesCount;
 };
@@ -385,7 +388,7 @@ export const obtainVideogameUploadsDetailsSVC = async videogameId => {
     return key;
   });
 
-  if (!videogame || !videogameFilters) return false;
+  if (!videogame || !videogameFilters) return 500;
 
   const info = {
     videogame: videogame[0],
@@ -457,16 +460,18 @@ export const editVideogameUploadSVC = async (
   ]);
 
   if (!resultsUpdate || !resultsCategory || !resultsOperatingSystem || !resultsLanguage || !resultsPlayers)
-    return false;
+    return 500;
 
   return true;
 };
 
 export const deleteVideogameSVC = async videogameId => {
-  const deleteVideogame = 'DELETE FROM videogames WHERE videogameId = ?';
+  const deleteVideogame = 'DELETE aFROM videogames WHERE videogameId = ?';
   const resultsDelete = await databaseExecute(deleteVideogame, [videogameId]);
 
-  if (!resultsDelete) return false;
+  console.log(resultsDelete);
+
+  if (!resultsDelete) return 500;
 
   return true;
 };

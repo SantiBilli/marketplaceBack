@@ -26,7 +26,7 @@ export const insertReviewSVC = async (videogameId, userId, description, stars) =
   ]);
 
   if (!results || !newAverageRating || !updateVideogame) {
-    return false;
+    return 500;
   }
 
   return true;
@@ -36,7 +36,7 @@ export const obtainReviewsSVC = async (videogameId, page, limit) => {
   let querryArray = [videogameId];
 
   let getReviews = `SELECT reviews.stars, reviews.description, users.name
-    FROM reviews 
+    FROM reviews
     JOIN users ON reviews.userId = users.userId
     WHERE videogameId = ? ORDER BY reviews.insert_time DESC `;
 
@@ -45,7 +45,7 @@ export const obtainReviewsSVC = async (videogameId, page, limit) => {
 
   const results = await databaseExecute(getReviews, querryArray);
 
-  if (!results) return false;
+  if (!results) return 500;
 
   return results;
 };
@@ -55,7 +55,7 @@ export const reviewsCountSVC = async videogameId => {
 
   const results = await databaseExecute(getReviewsCount, [videogameId]);
 
-  if (!results) return false;
+  if (!results) return 500;
 
   return results[0].reviewsCount;
 };

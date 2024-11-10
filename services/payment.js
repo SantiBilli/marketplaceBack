@@ -9,7 +9,7 @@ export const addToLibrarySVC = async (videogameId, userId) => {
   const response2 = await databaseExecute(querryStats, [videogameId]);
   const response3 = await databaseExecute(deleteWishList, [videogameId, userId]);
 
-  if (!response || !response2 || !response3) return false;
+  if (!response || !response2 || !response3) return 500;
 
   return true;
 };
