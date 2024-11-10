@@ -327,7 +327,7 @@ export const obtainVideogamesUploadsCountSVC = async userId => {
 
 export const obtainVideogameUploadsDetailsSVC = async videogameId => {
   const querry = `
-            SELECT 
+            SELECT
                 videogames.videogameId, videogames.name, videogames.price, videogames.photo, videogames.description, videogames.minRequirements, videogames.recRequirements, videogames.visible
             FROM 
                 videogames 
@@ -466,10 +466,8 @@ export const editVideogameUploadSVC = async (
 };
 
 export const deleteVideogameSVC = async videogameId => {
-  const deleteVideogame = 'DELETE aFROM videogames WHERE videogameId = ?';
+  const deleteVideogame = 'DELETE FROM videogames WHERE videogameId = ?';
   const resultsDelete = await databaseExecute(deleteVideogame, [videogameId]);
-
-  console.log(resultsDelete);
 
   if (!resultsDelete) return 500;
 
