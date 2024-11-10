@@ -16,7 +16,7 @@ export const modifyProfileCTL = async (req, res, next) => {
   if (email) {
     const emailExists = await emailExistsSVC(email);
 
-    if (emailExists) {
+    if (emailExists === 409) {
       res.status(409);
       return next();
     }
