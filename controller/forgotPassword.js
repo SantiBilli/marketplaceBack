@@ -13,7 +13,7 @@ export const forgotPasswordCTL = async (req, res) => {
 
   const verifyEmail = await forgotPasswordSVC(bodyParams.email);
 
-  if (verifyEmail == 404) return res.status(404).send();
+  if (verifyEmail == 404) return res.send();
   if (verifyEmail == 500) return res.status(500).send();
 
   const resetToken = crypto.randomBytes(32).toString('hex');
