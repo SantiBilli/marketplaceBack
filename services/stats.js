@@ -4,7 +4,7 @@ export const obtainStatSVC = async (userId, page, limit) => {
   let querryArray = [userId];
 
   let querry =
-    'SELECT videogames.videogameId, videogames.name, videogames.price, videogames.photo, videogames.purchases, videogames.views, videogames.wishlists FROM videogames WHERE userId = ?';
+    'SELECT videogames.videogameId, videogames.name vg_name, videogames.price, videogames.photo, videogames.purchases, videogames.views, videogames.wishlists FROM videogames WHERE userId = ?';
 
   querry += `LIMIT ? OFFSET ?;`;
   querryArray.push(Number(limit), (page - 1) * limit);
