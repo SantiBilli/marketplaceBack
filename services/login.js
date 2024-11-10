@@ -7,9 +7,7 @@ export const obtainPassword = async email => {
 
   if (!results) return 500;
 
-  if (results.length == 0) {
-    return false;
-  }
+  if (results.length == 0) return 401;
 
   return results[0];
 };

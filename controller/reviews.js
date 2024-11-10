@@ -15,7 +15,7 @@ export const createReviewCTL = async (req, res, next) => {
 
   const results = await insertReviewSVC(videogameId, userData.userId, comment, rating);
 
-  if (!results) {
+  if (results == 500) {
     res.status(500);
   }
 
@@ -29,8 +29,9 @@ export const obtainReviewsCTL = async (req, res, next) => {
   const results = await obtainReviewsSVC(videogameId, page, limit);
   const count = await reviewsCountSVC(videogameId);
 
-  if (!results) {
+  if (results == 500 || count == 500) {
     res.status(500);
+    return next();
   }
 
   res.locals.response = {

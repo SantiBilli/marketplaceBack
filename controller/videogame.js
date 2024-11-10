@@ -35,20 +35,23 @@ export const registerVideogamesCTL = async (req, res, next) => {
     userData.userId
   );
 
-  if (!publicaciones) res.status(500);
+  if (publicaciones === 500) {
+    fs.unlinkSync(`uploads/videogamePhotos/${photo}`);
+    res.status(500);
+    return next();
+  }
 
   res.status(201);
-
   next();
 };
 
 export const obtainVideogamesCTL = async (req, res, next) => {
   let { filters, qualification, page, limit, minPrice, maxPrice, search } = req.query;
 
-  if (minPrice == 'null' || minPrice == 'undefined' || minPrice == '') {
+  if (!minPrice) {
     minPrice = 0;
   }
-  if (maxPrice == 'null' || maxPrice == 'undefined' || maxPrice == '') {
+  if (!maxPrice) {
     maxPrice = Infinity;
   }
 
@@ -77,7 +80,7 @@ export const obtainVideogamesCTL = async (req, res, next) => {
   );
   const count = await obtainVideogamesCountSVC(filtersArray, qualification, minPrice, maxPrice, search);
 
-  if (!videogames) res.status(500);
+  if (videogames == 500 || count == 500) res.status(500).send();
 
   res.locals.response = {
     data: {
@@ -92,7 +95,14 @@ export const obtainVideogamesCTL = async (req, res, next) => {
 export const obtainVideogamesDetailCTL = async (req, res, next) => {
   const videogameId = req.params.videogameId;
 
+  const userData = res.locals.userData;
+
   const videogame = await obtainVideogamesDetailSVC(videogameId);
+
+  if (videogame == 500) {
+    res.status(500);
+    return next();
+  }
 
   res.locals.response = { data: videogame };
 
@@ -106,6 +116,11 @@ export const obtainVideogamesUploadsCTL = async (req, res, next) => {
 
   const videogames = await obtainVideogamesUploadsSVC(userData.userId, page, limit);
   const count = await obtainVideogamesUploadsCountSVC(userData.userId);
+
+  if (videogames == 500 || count == 500) {
+    res.status(500);
+    return next();
+  }
 
   res.locals.response = {
     data: {
@@ -122,6 +137,11 @@ export const obtainVideogameUploadsDetailsCTL = async (req, res, next) => {
 
   const videogame = await obtainVideogameUploadsDetailsSVC(videogameId);
 
+  if (videogame == 500) {
+    res.status(500);
+    return next();
+  }
+
   res.locals.response = { data: videogame };
 
   next();
@@ -133,6 +153,12 @@ export const editVideogameUploadCTL = async (req, res, next) => {
   const file = req.file;
 
   const info = await obtainVideogameUploadsDetailsSVC(id);
+
+  if (info === 500) {
+    res.status(500);
+    return next;
+  }
+
   const photo = info.videogame.photo;
 
   const activeFilters = filters.split(',');
@@ -153,7 +179,10 @@ export const editVideogameUploadCTL = async (req, res, next) => {
     visible
   );
 
-  if (!videogameEdit) res.status(500);
+  if (videogameEdit === 500) {
+    res.status(500);
+    return next();
+  }
 
   next();
 };
@@ -163,7 +192,9 @@ export const deleteVideogameCTL = async (req, res, next) => {
 
   const videogameDelete = await deleteVideogameSVC(videogameId);
 
-  if (!videogameDelete) res.status(500);
+  if (videogameDelete === 500) {
+    res.status(500);
+  }
 
   next();
 };

@@ -57,7 +57,6 @@ export const wishlistObtainSVC = async (userId, page, limit) => {
   const response = await databaseExecute(querry, querryArray);
 
   if (!response) return 500;
-  if (response.length == 0) return 204;
 
   return response;
 };
@@ -74,7 +73,6 @@ export const wishlistObtainCountSVC = async userId => {
   const response = await databaseExecute(querry, [userId]);
 
   if (!response) return 500;
-  if (response.length == 0) return 204;
 
   return response;
 };

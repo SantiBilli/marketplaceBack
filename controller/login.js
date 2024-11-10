@@ -6,13 +6,13 @@ export const loginCTL = async (req, res, next) => {
 
   const userData = await obtainPassword(bodyParams.email);
 
-  if (userData == 500) return res.status(500).send('Database Error.');
+  if (userData == 500) return res.status(500).send(); //500 Internal Server Error
 
-  if (!userData) return res.status(401).send('Credenciales incorrectas.'); //401 Unauthorized
+  if (userData == 401) return res.status(401).send(); //401 Unauthorized
 
   const match = await bcrypt.compare(bodyParams.password, userData.password);
 
-  if (!match) return res.status(401).send('Credenciales incorrectas.'); //401 Unauthorized
+  if (!match) return res.status(401).send(); //401 Unauthorized
 
   res.locals.userData = {
     userId: userData.userId,

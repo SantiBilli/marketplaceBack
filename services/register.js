@@ -1,5 +1,4 @@
 import { v4 } from 'uuid';
-import bcrypt from 'bcrypt';
 import { databaseExecute } from '../database/database.js';
 
 export const emailExistsSVC = async email => {
@@ -7,7 +6,8 @@ export const emailExistsSVC = async email => {
 
   const results = await databaseExecute(emailExists, [email]);
 
-  if (results.length == 0) return false;
+  if (!results) return 500;
+  if (results.length != 0) return 409;
 
   return true;
 };
@@ -29,6 +29,8 @@ export const registerClientSVC = async (name, surname, email, date, password) =>
   ]);
 
   if (!results) return 500;
+
+  return true;
 };
 
 export const registerBusinessSVC = async (name, email, pfp, description, password) => {
@@ -48,4 +50,6 @@ export const registerBusinessSVC = async (name, email, pfp, description, passwor
   ]);
 
   if (!results) return 500;
+
+  return true;
 };
