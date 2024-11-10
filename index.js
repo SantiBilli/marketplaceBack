@@ -29,17 +29,17 @@ app.use(cors({ credentials: true, origin: (origin, callback) => callback(null, o
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
-app.use('/api', pingRouter);
-app.use('/api', registerRouter);
-app.use('/api', loginRouter);
-app.use('/api', videogameRouter);
-app.use('/api', profileRouter);
-app.use('/api', reviewsRouter);
-app.use('/api', wishlistRouter);
-app.use('/api', statsRouter);
-app.use('/api', forgotPasswordRouter);
-app.use('/api', paymentRouter);
-app.use('/api', libraryRouter);
+app.use(pingRouter);
+app.use(registerRouter);
+app.use(loginRouter);
+app.use(videogameRouter);
+app.use(profileRouter);
+app.use(reviewsRouter);
+app.use(wishlistRouter);
+app.use(statsRouter);
+app.use(forgotPasswordRouter);
+app.use(paymentRouter);
+app.use(libraryRouter);
 
 app.use('/videogame', express.static(videogamesDirectory));
 app.use('/pfp', express.static(pfpDirectory));
