@@ -39,7 +39,7 @@ export const forgotPasswordCTL = async (req, res) => {
   var mailOptions = {
     from: 'smartswapsip@gmail.com',
     to: bodyParams.email,
-    subject: 'Cambiar Contraseña Smart Swap',
+    subject: 'Cambiar Contraseña',
     html: `
                 <p>Ingresa al siguiente link para cambiar tu contraseña:</p>
                 <p>${link}</p>
