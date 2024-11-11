@@ -17,7 +17,9 @@ export const forgotPasswordCTL = async (req, res) => {
   if (verifyEmail == 500) return res.status(500).send();
 
   const resetToken = crypto.randomBytes(32).toString('hex');
-  const token = await userTokenSVC(bodyParams.email, resetToken);
+  const expireToken = new Date(Date.now() + 60000); //3600000 = 1 hora
+
+  const token = await userTokenSVC(bodyParams.email, resetToken, expireToken);
 
   if (token == 500) return res.status(500).send();
 
@@ -57,14 +59,14 @@ export const changePasswordCTL = async (req, res) => {
   const token = req.params.token;
   const password = req.body.password;
 
-  const userId = await obtainTokenUserSVC(token);
+  const tokenData = await obtainTokenUserSVC(token);
 
-  if (userId == 498) return res.status(498).send();
-  if (userId == 500) return res.status(500).send();
+  if (tokenData == 498 || tokenData.token_expire < Date.now()) return res.status(498).send();
+  if (tokenData == 500) return res.status(500).send();
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(password, salt);
-  const update = await updatePasswordSVC(userId, hashPassword);
+  const update = await updatePasswordSVC(tokenData.userId, hashPassword);
 
   if (update == 500) return res.status(500).send();
 
