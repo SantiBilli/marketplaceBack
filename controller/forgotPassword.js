@@ -17,7 +17,7 @@ export const forgotPasswordCTL = async (req, res) => {
   if (verifyEmail == 500) return res.status(500).send();
 
   const resetToken = crypto.randomBytes(32).toString('hex');
-  const expireToken = new Date(Date.now() + 60000); //3600000 = 1 hora
+  const expireToken = new Date(Date.now() + 3600000);
 
   const token = await userTokenSVC(bodyParams.email, resetToken, expireToken);
 
